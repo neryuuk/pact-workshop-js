@@ -1,6 +1,6 @@
 {
   "name": "pact-workshop-js",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "scripts": {
     "postinstall": "concurrently \"npm ci --prefix consumer\" \"npm ci --prefix provider\"",
