@@ -28,8 +28,8 @@
     "pretest:pact": "rimraf pacts/*.json",
     "test:pact": "CI=true react-scripts test --testTimeout=30000 pact.spec.js",
     "test:unit": "CI=true react-scripts test api.spec.js",
-    "pact:publish": "pact-broker publish ./pacts --consumer-app-version=\"1.0.0\" --auto-detect-version-properties --broker-base-url=http://localhost:9292 --broker-username pact --broker-password pact",
-    "pact:publish:flow": "node --env-file=.env ./node_modules/@pact-foundation/pact-core/bin/pact-broker publish ./pacts --consumer-app-version=\"1.0.0\" --auto-detect-version-properties"
+    "pact:publish:local": "node --env-file=.env.local ./node_modules/@pact-foundation/pact-core/bin/pact-broker publish ./pacts --consumer-app-version=\"1.0.2\" --auto-detect-version-properties",
+    "pact:publish": "node --env-file=.env ./node_modules/@pact-foundation/pact-core/bin/pact-broker publish ./pacts --consumer-app-version=\"1.0.2\" --auto-detect-version-properties"
   },
   "eslintConfig": {
     "extends": "react-app"
