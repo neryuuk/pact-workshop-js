@@ -10,19 +10,19 @@ This workshop should take from 1 to 2 hours, depending on how deep you want to g
 
 **Workshop outline**:
 
-- [step 1: **create consumer**](https://github.com/pact-foundation/pact-workshop-js/tree/step1#step-1---simple-consumer-calling-provider): Create our consumer before the Provider API even exists
-- [step 2: **unit test**](https://github.com/pact-foundation/pact-workshop-js/tree/step2#step-2---client-tested-but-integration-fails): Write a unit test for our consumer
-- [step 3: **pact test**](https://github.com/pact-foundation/pact-workshop-js/tree/step3#step-3---pact-to-the-rescue): Write a Pact test for our consumer
-- [step 4: **pact verification**](https://github.com/pact-foundation/pact-workshop-js/tree/step4#step-4---verify-the-provider): Verify the consumer pact with the Provider API
-- [step 5: **fix consumer**](https://github.com/pact-foundation/pact-workshop-js/tree/step5#step-5---back-to-the-client-we-go): Fix the consumer's bad assumptions about the Provider
-- [step 6: **pact test**](https://github.com/pact-foundation/pact-workshop-js/tree/step6#step-6---consumer-updates-contract-for-missing-products): Write a pact test for `404` (missing User) in consumer
-- [step 7: **provider states**](https://github.com/pact-foundation/pact-workshop-js/tree/step7#step-7---adding-the-missing-states): Update API to handle `404` case
-- [step 8: **pact test**](https://github.com/pact-foundation/pact-workshop-js/tree/step8#step-8---authorization): Write a pact test for the `401` case
-- [step 9: **pact test**](https://github.com/pact-foundation/pact-workshop-js/tree/step9#step-9---implement-authorisation-on-the-provider): Update API to handle `401` case
-- [step 10: **request filters**](https://github.com/pact-foundation/pact-workshop-js/tree/step10#step-10---request-filters-on-the-provider): Fix the provider to support the `401` case
-- [step 11: **pact broker**](https://github.com/pact-foundation/pact-workshop-js/tree/step11#step-11---using-a-pact-broker): Implement a broker workflow for integration with CI/CD
-- [step 12: **broker webhooks**](https://github.com/pact-foundation/pact-workshop-js/tree/step12#step-12---using-webhooks): Trigger provider workflows when contracts change, via webhooks
-- [step 13: **pactflow broker**](https://github.com/pact-foundation/pact-workshop-js/tree/step13#step-13---using-a-pactflow-broker): Implement a managed pactflow workflow for integration with CI/CD
+- [step 1: **create consumer**](#step-1---simple-consumer-calling-provider): Create our consumer before the Provider API even exists
+- [step 2: **unit test**](#step-2---client-tested-but-integration-fails): Write a unit test for our consumer
+- [step 3: **pact test**](#step-3---pact-to-the-rescue): Write a Pact test for our consumer
+- [step 4: **pact verification**](#step-4---verify-the-provider): Verify the consumer pact with the Provider API
+- [step 5: **fix consumer**](#step-5---back-to-the-client-we-go): Fix the consumer's bad assumptions about the Provider
+- [step 6: **pact test**](#step-6---consumer-updates-contract-for-missing-products): Write a pact test for `404` (missing User) in consumer
+- [step 7: **provider states**](#step-7---adding-the-missing-states): Update API to handle `404` case
+- [step 8: **pact test**](#step-8---authorization): Write a pact test for the `401` case
+- [step 9: **pact test**](#step-9---implement-authorisation-on-the-provider): Update API to handle `401` case
+- [step 10: **request filters**](#step-10---request-filters-on-the-provider): Fix the provider to support the `401` case
+- [step 11: **pact broker**](#step-11---using-a-pact-broker): Implement a broker workflow for integration with CI/CD
+- [step 12: **broker webhooks**](#step-12---using-webhooks): Trigger provider workflows when contracts change, via webhooks
+- [step 13: **pactflow broker**](#step-13---using-a-pactflow-broker): Implement a managed pactflow workflow for integration with CI/CD
 
 _NOTE: Each step is tied to, and must be run within, a git branch, allowing you to progress through each stage incrementally._
 
@@ -107,7 +107,7 @@ We can run the client with `npm start --prefix consumer` - it should fail with t
 
 ![Failed step1 page](diagrams/workshop_step1_failed_page.png)
 
-*Move on to [step 2](https://github.com/pact-foundation/pact-workshop-js/tree/step2#step-2---client-tested-but-integration-fails)*
+*Move on to [step 2](#step-2---client-tested-but-integration-fails)*
 
 ## Step 2 - Client Tested but integration fails
 
@@ -232,7 +232,7 @@ Doh! We are getting 404 everytime we try to view detailed product information. O
 
 We need to have a conversation about what the endpoint should be, but first...
 
-*Move on to [step 3](https://github.com/pact-foundation/pact-workshop-js/tree/step3#step-3---pact-to-the-rescue)*
+*Move on to [step 3](#step-3---pact-to-the-rescue)*
 
 ## Step 3 - Pact to the rescue
 
@@ -387,7 +387,7 @@ A pact file should have been generated in *consumer/pacts/FrontendWebsite-Produc
 
 *NOTE*: even if the API client had been graciously provided for us by our Provider Team, it doesn't mean that we shouldn't write contract tests - because the version of the client we have may not always be in sync with the deployed API - and also because we will write tests on the output appropriate to our specific needs.
 
-*Move on to [step 4](https://github.com/pact-foundation/pact-workshop-js/tree/step4#step-4---verify-the-provider)*
+*Move on to [step 4](#step-4---verify-the-provider)*
 
 ## Step 4 - Verify the provider
 
@@ -481,7 +481,7 @@ The test has failed, as the expected path `/products/{id}` is returning 404. We 
 
 The correct endpoint which the consumer should call is `/product/{id}`.
 
-Move on to [step 5](https://github.com/pact-foundation/pact-workshop-js/tree/step5#step-5---back-to-the-client-we-go)
+Move on to [step 5](#step-5---back-to-the-client-we-go)
 
 ## Step 5 - Back to the client we go
 
@@ -575,7 +575,7 @@ Verifying a pact between FrontendWebsite and ProductService
 
 Yay - green ✅!
 
-Move on to [step 6](https://github.com/pact-foundation/pact-workshop-js/tree/step6#step-6---consumer-updates-contract-for-missing-products)
+Move on to [step 6](#step-6---consumer-updates-contract-for-missing-products)
 
 ## Step 6 - Consumer updates contract for missing products
 
@@ -723,7 +723,7 @@ We expected this failure, because the product we are requesing does in fact exis
 
 We could resolve this by updating our consumer test to use a known non-existent product, but it's worth understanding how Provider states work more generally.
 
-*Move on to [step 7](https://github.com/pact-foundation/pact-workshop-js/tree/step7#step-7---adding-the-missing-states)*
+*Move on to [step 7](#step-7---adding-the-missing-states)*
 
 ## Step 7 - Adding the missing states
 
@@ -809,7 +809,7 @@ Verifying a pact between FrontendWebsite and ProductService
 
 _NOTE_: The states are not necessarily a 1 to 1 mapping with the consumer contract tests. You can reuse states amongst different tests. In this scenario we could have used `no products exist` for both tests which would have equally been valid.
 
-*Move on to [step 8](https://github.com/pact-foundation/pact-workshop-js/tree/step8#step-8---authorization)*
+*Move on to [step 8](#step-8---authorization)*
 
 ## Step 8 - Authorization
 
@@ -978,7 +978,7 @@ Failures:
 
 Now with the most recently added interactions where we are expecting a response of 401 when no authorization header is sent, we are getting 200...
 
-Move on to [step 9](https://github.com/pact-foundation/pact-workshop-js/tree/step9#step-9---implement-authorisation-on-the-provider)*
+Move on to [step 9](#step-9---implement-authorisation-on-the-provider)*
 
 ## Step 9 - Implement authorisation on the provider
 
@@ -1097,7 +1097,7 @@ There were 3 pact failures
 
 Oh, dear. _More_ tests are failing. Can you understand why?
 
-*Move on to [step 10](https://github.com/pact-foundation/pact-workshop-js/tree/step10#step-10---request-filters-on-the-provider)*
+*Move on to [step 10](#step-10---request-filters-on-the-provider)*
 
 ## Step 10 - Request Filters on the Provider
 
@@ -1142,7 +1142,7 @@ We can now run the Provider tests
 
 ```
 
-*Move on to [step 11](https://github.com/pact-foundation/pact-workshop-js/tree/step11#step-11---using-a-pact-broker)*
+*Move on to [step 11](#step-11---using-a-pact-broker)*
 
 ## Step 11 - Using a Pact Broker
 
@@ -1337,7 +1337,7 @@ That's it - you're now a Pact pro. Go build 🔨
 
 If you have extra time, why not try out Pact Webhooks
 
-*Move on to [step 12](https://github.com/pact-foundation/pact-workshop-js/tree/step12#step-12---using-webhooks)*
+*Move on to [step 12](#step-12---using-webhooks)*
 ## Step 12 - Using Webhooks
 
 _NOTE: Move to step 12:_
@@ -1430,7 +1430,7 @@ Note: Unnecessary use of -X or --request, POST is already inferred.
 > Accept: */*
 > Content-Type: application/json
 > Content-Length: 511
-> 
+>
 < HTTP/1.1 201 Created
 < Vary: Accept
 < Content-Type: application/hal+json;charset=utf-8
@@ -1440,9 +1440,9 @@ Note: Unnecessary use of -X or --request, POST is already inferred.
 < X-Pact-Broker-Version: 2.107.1
 < X-Content-Type-Options: nosniff
 < Content-Length: 926
-< 
+<
 * Connection #0 to host localhost left intact
-{"uuid":"QxdSU5uCDllJTLDS_iLbNg","description":"POST host.docker.internal","enabled":true,"request":{"method":"POST","url":"http://host.docker.internal:9090","headers":{"Content-Type":"application/json"},"body":{"state":"${pactbroker.githubVerificationStatus}","description":"Pact Verification Tests ${pactbroker.providerVersionTags}","context":"${pactbroker.providerName}","target_url":"${pactbroker.verificationResultUrl}"}},"events":[{"name":"contract_content_changed"}],"createdAt":"2023-09-29T14:28:43+00:00","_links":{"self":{"title":"POST host.docker.internal","href":"http://localhost:8000/webhooks/QxdSU5uCDllJTLDS_iLbNg"},"pb:execute":{"title":"Test the execution of the webhook with the latest matching pact or verification by sending a POST request to this URL","href":"http://localhost:8000/webhooks/QxdSU5uCDllJTLDS_iLbNg/execute"},"pb:webhooks":{"title":"All webhooks","href":"http://localhost:8000/webhooks"}}}% 
+{"uuid":"QxdSU5uCDllJTLDS_iLbNg","description":"POST host.docker.internal","enabled":true,"request":{"method":"POST","url":"http://host.docker.internal:9090","headers":{"Content-Type":"application/json"},"body":{"state":"${pactbroker.githubVerificationStatus}","description":"Pact Verification Tests ${pactbroker.providerVersionTags}","context":"${pactbroker.providerName}","target_url":"${pactbroker.verificationResultUrl}"}},"events":[{"name":"contract_content_changed"}],"createdAt":"2023-09-29T14:28:43+00:00","_links":{"self":{"title":"POST host.docker.internal","href":"http://localhost:8000/webhooks/QxdSU5uCDllJTLDS_iLbNg"},"pb:execute":{"title":"Test the execution of the webhook with the latest matching pact or verification by sending a POST request to this URL","href":"http://localhost:8000/webhooks/QxdSU5uCDllJTLDS_iLbNg/execute"},"pb:webhooks":{"title":"All webhooks","href":"http://localhost:8000/webhooks"}}}%
 ```
 
 Run the consumer pact tests
@@ -1471,9 +1471,9 @@ This will trigger the provider tests.
 
 ```console
 ## CI Simulator ## Broker webhook is listening on port 9090...
-Got webhook {"state":"pending","description":"Pact Verification Tests ","context":"ProductService","target_url":""} 
+Got webhook {"state":"pending","description":"Pact Verification Tests ","context":"ProductService","target_url":""}
  Triggering provider tests...
-provider-verification: 
+provider-verification:
 > product-service@1.0.0 test:pact
 > jest --testTimeout 30000 --testMatch "**/*.pact.test.js"
 ```
@@ -1530,7 +1530,7 @@ Cannot change the content of the pact for ProductService version 1.0.2 and provi
      ... ,
 ```
 
-*Optional - Move on to [step 13](https://github.com/pact-foundation/pact-workshop-js/tree/step13#step-13---using-a-pactflow-broker)* for integrating with a PactFlow Broker
+*Optional - Move on to [step 13](#step-13---using-a-pactflow-broker)* for integrating with a PactFlow Broker
 
 ## Step 13 - Using a PactFlow Broker
 

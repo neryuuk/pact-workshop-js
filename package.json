@@ -1,9 +1,10 @@
 {
   "name": "pact-workshop-js",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "postinstall": "concurrently \"npm ci --prefix consumer\" \"npm ci --prefix provider\"",
+    "inst:all": "concurrently \"npm i --prefix broker-webhook\" \"npm i --prefix consumer\" \"npm i --prefix provider\"; npm i",
     "start": "concurrently \"npm start --prefix consumer\" \"npm start --prefix provider\"",
     "lint": "concurrently \"cd consumer/ && npx eslint .\" \"cd provider/ && npx eslint .\""
   },

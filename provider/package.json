@@ -1,12 +1,12 @@
 {
   "name": "product-service",
   "version": "1.0.0",
-  "description": "",
   "main": "app.js",
+  "private": true,
   "scripts": {
-    "start": "node server.js",
-    "test": "jest",
-    "test:pact": "jest --testTimeout 30000 --testMatch \"**/*.pact.test.js\""
+    "start": "node --env-file=.env server.js",
+    "test": "node --env-file=.env ./node_modules/jest/bin/jest.js",
+    "test:pact": "node --env-file=.env ./node_modules/jest/bin/jest.js --testTimeout 30000 --testMatch \"**/*.pact.test.js\""
   },
   "dependencies": {
     "cors": "2.8.5",

@@ -28,7 +28,7 @@ describe("API Pact test", () => {
           method: "GET",
           path: "/products",
           headers: {
-            Authorization: like("Bearer 2019-01-14T11:34:18.045Z"),
+            Authorization: like(`Bearer ${new Date().toISOString()}`),
           },
         },
         willRespondWith: {
@@ -65,7 +65,7 @@ describe("API Pact test", () => {
           method: "GET",
           path: "/products",
           headers: {
-            Authorization: like("Bearer 2019-01-14T11:34:18.045Z"),
+            Authorization: like(`Bearer ${new Date().toISOString()}`),
           },
         },
         willRespondWith: {
@@ -109,7 +109,7 @@ describe("API Pact test", () => {
           "Request failed with status code 401"
         );
       });
-    });    
+    });
   });
 
   describe("getting one product", () => {
@@ -122,7 +122,7 @@ describe("API Pact test", () => {
           method: "GET",
           path: "/product/10",
           headers: {
-            Authorization: like("Bearer 2019-01-14T11:34:18.045Z"),
+            Authorization: like(`Bearer ${new Date().toISOString()}`),
           },
         },
         willRespondWith: {
@@ -161,7 +161,7 @@ describe("API Pact test", () => {
           method: "GET",
           path: "/product/11",
           headers: {
-            Authorization: like("Bearer 2019-01-14T11:34:18.045Z"),
+            Authorization: like(`Bearer ${new Date().toISOString()}`),
           },
         },
         willRespondWith: {

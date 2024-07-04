@@ -28,6 +28,5 @@
   "plugins": [
     "react"
   ],
-  "rules": {
-  }
+  "rules": {}
 }
