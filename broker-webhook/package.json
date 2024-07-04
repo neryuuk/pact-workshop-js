@@ -5,7 +5,7 @@
     "private": true,
     "main": "index.js",
     "scripts": {
-      "start": "node --env-file=.env server.js",
+      "start": "node --env-file=.env.local server.js",
       "create-webhook": "./create_webhook.sh"
     },
     "author": "",

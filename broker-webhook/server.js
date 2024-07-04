@@ -9,7 +9,5 @@ app.use(routes);
 
 app.listen(
   process.env.PORT,
-  () => {
-    console.log(`## CI Simulator ## Broker webhook is listening on port ${process.env.PORT}...`)
-  }
+  () => { console.log(`Broker webhook is listening on port ${process.env.PORT}...`) }
 );
