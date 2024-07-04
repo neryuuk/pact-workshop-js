@@ -24,27 +24,15 @@ This workshop should take from 1 to 2 hours, depending on how deep you want to g
 - [step 12: **broker webhooks**](#step-12---using-webhooks): Trigger provider workflows when contracts change, via webhooks
 - [step 13: **pactflow broker**](#step-13---using-a-pactflow-broker): Implement a managed pactflow workflow for integration with CI/CD
 
-_NOTE: Each step is tied to, and must be run within, a git branch, allowing you to progress through each stage incrementally._
-
-_EG: Move to step 2:_
-
-_`git checkout step2`_
-
-_`npm install`_
-
-<hr/>
-
 ## Learning objectives
 
 If running this as a team workshop format, you may want to take a look through the [learning objectives](./LEARNING.md).
 
 ## Requirements
 
-[Docker](https://www.docker.com)
-
-[Docker Compose](https://docs.docker.com/compose/install/)
-
-[Node + NPM](https://nodejs.org/en/)
+- [Docker](https://www.docker.com)
+- [Docker Compose](https://docs.docker.com/compose/install/)
+- [Node + NPM](https://nodejs.org/en/)
 
 ## Scenario
 
@@ -52,6 +40,8 @@ There are two components in scope for our workshop.
 
 1. Product Catalog website. It provides an interface to query the Product service for product information.
 1. Product Service (Provider). Provides useful things about products, such as listing all products and getting the details of an individual product.
+
+<hr/>
 
 ## Step 1 - Simple Consumer calling Provider
 
@@ -72,33 +62,30 @@ You can see the client interface we created in `consumer/src/api.js`:
 
 ```javascript
 export class API {
-
-    constructor(url) {
-        if (url === undefined || url === "") {
-            url = process.env.REACT_APP_API_BASE_URL;
-        }
-        if (url.endsWith("/")) {
-            url = url.substr(0, url.length - 1)
-        }
-        this.url = url
+  constructor(url) {
+    if (url === undefined || url === "") {
+      url = process.env.REACT_APP_API_BASE_URL;
     }
-
-    withPath(path) {
-        if (!path.startsWith("/")) {
-            path = "/" + path
-        }
-        return `${this.url}${path}`
+    if (url.endsWith("/")) {
+      url = url.substr(0, url.length - 1);
     }
+    this.url = url;
+  }
 
-    async getAllProducts() {
-        return axios.get(this.withPath("/products"))
-            .then(r => r.data);
+  withPath(path) {
+    if (!path.startsWith("/")) {
+      path = "/" + path;
     }
+    return `${this.url}${path}`;
+  }
 
-    async getProduct(id) {
-        return axios.get(this.withPath("/products/" + id))
-            .then(r => r.data);
-    }
+  async getAllProducts() {
+    return axios.get(this.withPath("/products")).then((r) => r.data);
+  }
+
+  async getProduct(id) {
+    return axios.get(this.withPath("/products/" + id)).then((r) => r.data);
+  }
 }
 ```
 
@@ -107,17 +94,8 @@ We can run the client with `npm start --prefix consumer` - it should fail with t
 
 ![Failed step1 page](diagrams/workshop_step1_failed_page.png)
 
-*Move on to [step 2](#step-2---client-tested-but-integration-fails)*
-
-## Step 2 - Client Tested but integration fails
-
-_NOTE: Move to step 2:_
-
-_`git checkout step2`_
-
-_`npm install`_
-
 <hr/>
+## Step 2 - Client Tested but integration fails
 
 Now lets create a basic test for our API client. We're going to check 2 things:
 
@@ -131,52 +109,45 @@ import API from "./api";
 import nock from "nock";
 
 describe("API", () => {
+  test("get all products", async () => {
+    const products = [
+      {
+        id: "9",
+        type: "CREDIT_CARD",
+        name: "GEM Visa",
+        version: "v2",
+      },
+      {
+        id: "10",
+        type: "CREDIT_CARD",
+        name: "28 Degrees",
+        version: "v1",
+      },
+    ];
+    nock(API.url)
+      .get("/products")
+      .reply(200, products, { "Access-Control-Allow-Origin": "*" });
+    const respProducts = await API.getAllProducts();
+    expect(respProducts).toEqual(products);
+  });
 
-    test("get all products", async () => {
-        const products = [
-            {
-                "id": "9",
-                "type": "CREDIT_CARD",
-                "name": "GEM Visa",
-                "version": "v2"
-            },
-            {
-                "id": "10",
-                "type": "CREDIT_CARD",
-                "name": "28 Degrees",
-                "version": "v1"
-            }
-        ];
-        nock(API.url)
-            .get('/products')
-            .reply(200,
-                products,
-                {'Access-Control-Allow-Origin': '*'});
-        const respProducts = await API.getAllProducts();
-        expect(respProducts).toEqual(products);
-    });
-
-    test("get product ID 50", async () => {
-        const product = {
-            "id": "50",
-            "type": "CREDIT_CARD",
-            "name": "28 Degrees",
-            "version": "v1"
-        };
-        nock(API.url)
-            .get('/products/50')
-            .reply(200, product, {'Access-Control-Allow-Origin': '*'});
-        const respProduct = await API.getProduct("50");
-        expect(respProduct).toEqual(product);
-    });
+  test("get product ID 50", async () => {
+    const product = {
+      id: "50",
+      type: "CREDIT_CARD",
+      name: "28 Degrees",
+      version: "v1",
+    };
+    nock(API.url)
+      .get("/products/50")
+      .reply(200, product, { "Access-Control-Allow-Origin": "*" });
+    const respProduct = await API.getProduct("50");
+    expect(respProduct).toEqual(product);
+  });
 });
 ```
 
-
-
 ![Unit Test With Mocked Response](diagrams/workshop_step2_unit_test.svg)
-
-
 
 Let's run this test and see it all pass:
 
@@ -198,7 +169,6 @@ Ran all test suites.
 If you encounter failing tests after running `npm test --prefix consumer`, make sure that the current branch is `step2`.
 
 Meanwhile, our provider team has started building out their API in parallel. Let's run our website against our provider (you'll need two terminals to do this):
-
 
 ```console
 # Terminal 1
@@ -232,17 +202,8 @@ Doh! We are getting 404 everytime we try to view detailed product information. O
 
 We need to have a conversation about what the endpoint should be, but first...
 
-*Move on to [step 3](#step-3---pact-to-the-rescue)*
-
-## Step 3 - Pact to the rescue
-
-_NOTE: Move to step 3:_
-
-_`git checkout step3`_
-
-_`npm install`_
-
 <hr/>
+## Step 3 - Pact to the rescue
 
 Unit tests are written and executed in isolation of any other services. When we write tests for code that talk to other services, they are built on trust that the contracts are upheld. There is no way to validate that the consumer and provider can communicate correctly.
 
@@ -252,7 +213,7 @@ Adding contract tests via Pact would have highlighted the `/product/{id}` endpoi
 
 Let us add Pact to the project and write a consumer pact test for the `GET /products/{id}` endpoint.
 
-*Provider states* is an important concept of Pact that we need to introduce. These states help define the state that the provider should be in for specific interactions. For the moment, we will initially be testing the following states:
+_Provider states_ is an important concept of Pact that we need to introduce. These states help define the state that the provider should be in for specific interactions. For the moment, we will initially be testing the following states:
 
 - `product with ID 10 exists`
 - `products exist`
@@ -265,7 +226,11 @@ In `consumer/src/api.pact.spec.js`:
 
 ```javascript
 import path from "path";
-import { PactV3, MatchersV3, SpecificationVersion, } from "@pact-foundation/pact";
+import {
+  PactV3,
+  MatchersV3,
+  SpecificationVersion,
+} from "@pact-foundation/pact";
 import { API } from "./api";
 const { eachLike, like } = MatchersV3;
 
@@ -276,7 +241,7 @@ const provider = new PactV3({
   logLevel: "warn",
   dir: path.resolve(process.cwd(), "pacts"),
   spec: SpecificationVersion.SPECIFICATION_VERSION_V2,
-  host: "127.0.0.1"
+  host: "127.0.0.1",
 });
 
 describe("API Pact test", () => {
@@ -356,7 +321,6 @@ describe("API Pact test", () => {
 });
 ```
 
-
 ![Test using Pact](diagrams/workshop_step3_pact.svg)
 
 This test starts a mock server a random port that acts as our provider service. To get this to work we update the URL in the `Client` that we create, after initialising Pact.
@@ -383,21 +347,12 @@ Time:        2.792s, estimated 3s
 Ran all test suites.
 ```
 
-A pact file should have been generated in *consumer/pacts/FrontendWebsite-ProductService.json*
+A pact file should have been generated in _consumer/pacts/FrontendWebsite-ProductService.json_
 
-*NOTE*: even if the API client had been graciously provided for us by our Provider Team, it doesn't mean that we shouldn't write contract tests - because the version of the client we have may not always be in sync with the deployed API - and also because we will write tests on the output appropriate to our specific needs.
-
-*Move on to [step 4](#step-4---verify-the-provider)*
-
-## Step 4 - Verify the provider
-
-_NOTE: Move to step 4:_
-
-_`git checkout step4`_
-
-_`npm install`_
+_NOTE_: even if the API client had been graciously provided for us by our Provider Team, it doesn't mean that we shouldn't write contract tests - because the version of the client we have may not always be in sync with the deployed API - and also because we will write tests on the output appropriate to our specific needs.
 
 <hr/>
+## Step 4 - Verify the provider
 
 We need to make the pact file (the contract) that was produced from the consumer test available to the Provider module. This will help us verify that the provider can meet the requirements as set out in the contract. For now, we'll hard code the path to where it is saved in the consumer test, in step 11 we investigate a better way of doing this.
 
@@ -406,32 +361,38 @@ Now let's make a start on writing Pact tests to validate the consumer contract:
 In `provider/product/product.pact.test.js`:
 
 ```javascript
-const { Verifier } = require('@pact-foundation/pact');
-const path = require('path');
+const { Verifier } = require("@pact-foundation/pact");
+const path = require("path");
 
 // Setup provider server to verify
-const app = require('express')();
-app.use(require('./product.routes'));
+const app = require("express")();
+app.use(require("./product.routes"));
 const server = app.listen("8080");
 
 describe("Pact Verification", () => {
-    it("validates the expectations of ProductService", () => {
-        const opts = {
-            logLevel: "INFO",
-            providerBaseUrl: "http://127.0.0.1:8080",
-            provider: "ProductService",
-            providerVersion: "1.0.0",
-            pactUrls: [
-                path.resolve(__dirname, '../../consumer/pacts/FrontendWebsite-ProductService.json')
-            ]
-        };
+  it("validates the expectations of ProductService", () => {
+    const opts = {
+      logLevel: "INFO",
+      providerBaseUrl: "http://127.0.0.1:8080",
+      provider: "ProductService",
+      providerVersion: "1.0.0",
+      pactUrls: [
+        path.resolve(
+          __dirname,
+          "../../consumer/pacts/FrontendWebsite-ProductService.json"
+        ),
+      ],
+    };
 
-        return new Verifier(opts).verifyProvider().then(output => {
-            console.log(output);
-        }).finally(() => {
-            server.close();
-        });
-    })
+    return new Verifier(opts)
+      .verifyProvider()
+      .then((output) => {
+        console.log(output);
+      })
+      .finally(() => {
+        server.close();
+      });
+  });
 });
 ```
 
@@ -481,17 +442,8 @@ The test has failed, as the expected path `/products/{id}` is returning 404. We 
 
 The correct endpoint which the consumer should call is `/product/{id}`.
 
-Move on to [step 5](#step-5---back-to-the-client-we-go)
-
-## Step 5 - Back to the client we go
-
-_NOTE: Move to step 5:_
-
-_`git checkout step5`_
-
-_`npm install`_
-
 <hr/>
+## Step 5 - Back to the client we go
 
 We now need to update the consumer client and tests to hit the correct product path.
 
@@ -547,8 +499,6 @@ Time:        2.106s
 Ran all test suites matching /pact.spec.js/i.
 ```
 
-
-
 Now we run the provider tests again with the updated contract:
 
 Run the command:
@@ -575,17 +525,8 @@ Verifying a pact between FrontendWebsite and ProductService
 
 Yay - green ✅!
 
-Move on to [step 6](#step-6---consumer-updates-contract-for-missing-products)
-
-## Step 6 - Consumer updates contract for missing products
-
-_NOTE: Move to step 6:_
-
-_`git checkout step6`_
-
-_`npm install`_
-
 <hr/>
+## Step 6 - Consumer updates contract for missing products
 
 We're now going to add 2 more scenarios for the contract
 
@@ -600,21 +541,20 @@ In `consumer/src/api.pact.spec.js`:
 ```javascript
 // within the 'getting all products' group
 test("no products exists", async () => {
-
   // set up Pact interactions
   await provider.addInteraction({
-    state: 'no products exist',
-    uponReceiving: 'get all products',
+    state: "no products exist",
+    uponReceiving: "get all products",
     withRequest: {
-      method: 'GET',
-      path: '/products'
+      method: "GET",
+      path: "/products",
     },
     willRespondWith: {
       status: 200,
       headers: {
-        'Content-Type': 'application/json; charset=utf-8'
+        "Content-Type": "application/json; charset=utf-8",
       },
-      body: []
+      body: [],
     },
   });
 
@@ -628,17 +568,16 @@ test("no products exists", async () => {
 
 // within the 'getting one product' group
 test("product does not exist", async () => {
-
   // set up Pact interactions
   await provider.addInteraction({
-    state: 'product with ID 11 does not exist',
-    uponReceiving: 'get product with ID 11',
+    state: "product with ID 11 does not exist",
+    uponReceiving: "get product with ID 11",
     withRequest: {
-      method: 'GET',
-      path: '/product/11'
+      method: "GET",
+      path: "/product/11",
     },
     willRespondWith: {
-      status: 404
+      status: 404,
     },
   });
 
@@ -647,7 +586,7 @@ test("product does not exist", async () => {
 
     // make request to Pact mock server
     await expect(api.getProduct("11")).rejects.toThrow(
-    "Request failed with status code 404"
+      "Request failed with status code 404"
     );
   });
 });
@@ -719,21 +658,12 @@ Failures:
            expected 404 but was 200
 ```
 
-We expected this failure, because the product we are requesing does in fact exist! What we want to test for, is what happens if there is a different *state* on the Provider. This is what is referred to as "Provider states", and how Pact gets around test ordering and related issues.
+We expected this failure, because the product we are requesing does in fact exist! What we want to test for, is what happens if there is a different _state_ on the Provider. This is what is referred to as "Provider states", and how Pact gets around test ordering and related issues.
 
 We could resolve this by updating our consumer test to use a known non-existent product, but it's worth understanding how Provider states work more generally.
 
-*Move on to [step 7](#step-7---adding-the-missing-states)*
-
-## Step 7 - Adding the missing states
-
-_NOTE: Move to step 7:_
-
-_`git checkout step7`_
-
-_`npm install`_
-
 <hr/>
+## Step 7 - Adding the missing states
 
 Our code already deals with missing users and sends a `404` response, however our test data fixture always has product ID 10 and 11 in our database.
 
@@ -809,17 +739,8 @@ Verifying a pact between FrontendWebsite and ProductService
 
 _NOTE_: The states are not necessarily a 1 to 1 mapping with the consumer contract tests. You can reuse states amongst different tests. In this scenario we could have used `no products exist` for both tests which would have equally been valid.
 
-*Move on to [step 8](#step-8---authorization)*
-
-## Step 8 - Authorization
-
-_NOTE: Move to step 8:_
-
-_`git checkout step8`_
-
-_`npm install`_
-
 <hr/>
+## Step 8 - Authorization
 
 It turns out that not everyone should be able to use the API. After a discussion with the team, it was decided that a time-bound bearer token would suffice. The token must be in `yyyy-MM-ddTHHmm` format and within 1 hour of the current time.
 
@@ -854,54 +775,53 @@ In `consumer/src/api.js`:
 In `consumer/src/api.pact.spec.js` we add authentication headers to the request setup for the existing tests:
 
 ```js
-      await provider.addInteraction({
-        states: [{ description: "no products exist" }],
-        uponReceiving: "get all products",
-        withRequest: {
-          method: "GET",
-          path: "/products",
-          headers: {
-            Authorization: like("Bearer 2019-01-14T11:34:18.045Z"),
-          },
-        },
-        willRespondWith: {
-          status: 200,
-          headers: {
-            "Content-Type": "application/json; charset=utf-8",
-          },
-          body: [],
-        },
-      });
+await provider.addInteraction({
+  states: [{ description: "no products exist" }],
+  uponReceiving: "get all products",
+  withRequest: {
+    method: "GET",
+    path: "/products",
+    headers: {
+      Authorization: like("Bearer 2019-01-14T11:34:18.045Z"),
+    },
+  },
+  willRespondWith: {
+    status: 200,
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+    },
+    body: [],
+  },
+});
 ```
 
 and we also add two new tests for the "no auth token" use case:
 
 ```js
-    // ...
-    test("no auth token", async () => {
+// ...
+test("no auth token", async () => {
+  // set up Pact interactions
+  await provider.addInteraction({
+    states: [{ description: "product with ID 10 exists" }],
+    uponReceiving: "get product by ID 10 with no auth token",
+    withRequest: {
+      method: "GET",
+      path: "/product/10",
+    },
+    willRespondWith: {
+      status: 401,
+    },
+  });
 
-      // set up Pact interactions
-      await provider.addInteraction({
-        states: [{ description: "product with ID 10 exists" }],
-        uponReceiving: "get product by ID 10 with no auth token",
-        withRequest: {
-          method: "GET",
-          path: "/product/10",
-        },
-        willRespondWith: {
-          status: 401,
-        },
-      });
+  await provider.executeTest(async (mockService) => {
+    const api = new API(mockService.url);
 
-      await provider.executeTest(async (mockService) => {
-        const api = new API(mockService.url);
-
-        // make request to Pact mock server
-        await expect(api.getProduct("10")).rejects.toThrow(
-          "Request failed with status code 401"
-        );
-      });
-    });
+    // make request to Pact mock server
+    await expect(api.getProduct("10")).rejects.toThrow(
+      "Request failed with status code 401"
+    );
+  });
+});
 ```
 
 Generate a new Pact file:
@@ -978,17 +898,8 @@ Failures:
 
 Now with the most recently added interactions where we are expecting a response of 401 when no authorization header is sent, we are getting 200...
 
-Move on to [step 9](#step-9---implement-authorisation-on-the-provider)*
-
-## Step 9 - Implement authorisation on the provider
-
-_NOTE: Move to step 9:_
-
-_`git checkout step9`_
-
-_`npm install`_
-
 <hr/>
+## Step 9 - Implement authorisation on the provider
 
 We will add a middleware to check the Authorization header and deny the request with `401` if the token is older than 1 hour.
 
@@ -997,19 +908,19 @@ In `provider/middleware/auth.middleware.js`
 ```javascript
 // 'Token' should be a valid ISO 8601 timestamp within the last hour
 const isValidAuthTimestamp = (timestamp) => {
-    let diff = (new Date() - new Date(timestamp)) / 1000;
-    return diff >= 0 && diff <= 3600
+  let diff = (new Date() - new Date(timestamp)) / 1000;
+  return diff >= 0 && diff <= 3600;
 };
 
 const authMiddleware = (req, res, next) => {
-    if (!req.headers.authorization) {
-        return res.status(401).json({ error: "Unauthorized" });
-    }
-    const timestamp = req.headers.authorization.replace("Bearer ", "")
-    if (!isValidAuthTimestamp(timestamp)) {
-        return res.status(401).json({ error: "Unauthorized" });
-    }
-    next();
+  if (!req.headers.authorization) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+  const timestamp = req.headers.authorization.replace("Bearer ", "");
+  if (!isValidAuthTimestamp(timestamp)) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+  next();
 };
 
 module.exports = authMiddleware;
@@ -1018,7 +929,7 @@ module.exports = authMiddleware;
 In `provider/server.js`
 
 ```javascript
-const authMiddleware = require('./middleware/auth.middleware');
+const authMiddleware = require("./middleware/auth.middleware");
 
 // add this into your init function
 app.use(authMiddleware);
@@ -1029,7 +940,7 @@ We also need to add the middleware to the server our Pact tests use.
 In `provider/product/product.pact.test.js`:
 
 ```javascript
-const authMiddleware = require('../middleware/auth.middleware');
+const authMiddleware = require("../middleware/auth.middleware");
 app.use(authMiddleware);
 ```
 
@@ -1097,17 +1008,8 @@ There were 3 pact failures
 
 Oh, dear. _More_ tests are failing. Can you understand why?
 
-*Move on to [step 10](#step-10---request-filters-on-the-provider)*
-
-## Step 10 - Request Filters on the Provider
-
-_NOTE: Move to step 10:_
-
-_`git checkout step10`_
-
-_`npm install`_
-
 <hr/>
+## Step 10 - Request Filters on the Provider
 
 Because our pact file has static data in it, our bearer token is now out of date, so when Pact verification passes it to the Provider we get a `401`. There are multiple ways to resolve this - mocking or stubbing out the authentication component is a common one. In our use case, we are going to use a process referred to as _Request Filtering_, using a `RequestFilter`.
 
@@ -1142,17 +1044,8 @@ We can now run the Provider tests
 
 ```
 
-*Move on to [step 11](#step-11---using-a-pact-broker)*
-
-## Step 11 - Using a Pact Broker
-
-_NOTE: Move to step 11:_
-
-_`git checkout step11`_
-
-_`npm install`_
-
 <hr/>
+## Step 11 - Using a Pact Broker
 
 ![Broker collaboration Workflow](diagrams/workshop_step10_broker.svg)
 
@@ -1204,7 +1097,6 @@ Ran all test suites matching /pact.spec.js/i.
 
 To publish the pacts:
 
-
 ```
 ❯ npm run pact:publish --prefix consumer
 
@@ -1216,7 +1108,7 @@ Pact successfully published for FrontendWebsite version 24c0e1-step11+24c0e1.SNA
     * Configure separate ProductService pact verification build and webhook to trigger it when the pact content changes. See https://docs.pact.io/go/webhooks
 ```
 
-*NOTE: you would usually only publish pacts from CI. *
+_NOTE: you would usually only publish pacts from CI. _
 
 Have a browse around the broker on http://127.0.0.1:8000 (with username/password: `pact_workshop`/`pact_workshop`) and see your newly published contract!
 
@@ -1240,7 +1132,8 @@ pactBrokerPassword: process.env.PACT_BROKER_PASSWORD || "pact_workshop",
 
 ```javascript
 // add to the opts {...}
-publishVerificationResult: process.env.CI || process.env.PACT_BROKER_PUBLISH_VERIFICATION_RESULTS
+publishVerificationResult: process.env.CI ||
+  process.env.PACT_BROKER_PUBLISH_VERIFICATION_RESULTS;
 ```
 
 Let's run the provider verification one last time after this change. It should print a few notices showing which pact(s) it has found from the broker, and why they were selected:
@@ -1337,16 +1230,8 @@ That's it - you're now a Pact pro. Go build 🔨
 
 If you have extra time, why not try out Pact Webhooks
 
-*Move on to [step 12](#step-12---using-webhooks)*
-## Step 12 - Using Webhooks
-
-_NOTE: Move to step 12:_
-
-_`git checkout step12`_
-
-_`npm install`_
-
 <hr/>
+## Step 12 - Using Webhooks
 
 **honours course**
 
@@ -1359,8 +1244,8 @@ Update your docker-compose file to support webhooks running from your local mach
 1. in `docker-compose.yaml`
 
 ```yml
-      PACT_BROKER_WEBHOOK_SCHEME_WHITELIST: http
-      PACT_BROKER_WEBHOOK_HOST_WHITELIST: host.docker.internal
+PACT_BROKER_WEBHOOK_SCHEME_WHITELIST: http
+PACT_BROKER_WEBHOOK_HOST_WHITELIST: host.docker.internal
 ```
 
 Recreate or Start the Pact Broker if its not already running
@@ -1394,24 +1279,24 @@ This will send the following payload.
 
 ```json
 {
-"events": [
-  {
-    "name": "contract_content_changed"
+  "events": [
+    {
+      "name": "contract_content_changed"
+    }
+  ],
+  "request": {
+    "method": "POST",
+    "url": "http://host.docker.internal:9090",
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "state": "${pactbroker.githubVerificationStatus}",
+      "description": "Pact Verification Tests ${pactbroker.providerVersionTags}",
+      "context": "${pactbroker.providerName}",
+      "target_url": "${pactbroker.verificationResultUrl}"
+    }
   }
-],
-"request": {
-  "method": "POST",
-  "url": "http://host.docker.internal:9090",
-  "headers": {
-    "Content-Type": "application/json"
-  },
-  "body": {
-    "state": "${pactbroker.githubVerificationStatus}",
-    "description": "Pact Verification Tests ${pactbroker.providerVersionTags}",
-    "context": "${pactbroker.providerName}",
-    "target_url": "${pactbroker.verificationResultUrl}"
-  }
-}
 }
 ```
 
@@ -1530,17 +1415,8 @@ Cannot change the content of the pact for ProductService version 1.0.2 and provi
      ... ,
 ```
 
-*Optional - Move on to [step 13](#step-13---using-a-pactflow-broker)* for integrating with a PactFlow Broker
-
-## Step 13 - Using a PactFlow Broker
-
-_NOTE: Move to step 13:_
-
-_`git checkout step13`_
-
-_`npm install`_
-
 <hr/>
+## Step 13 - Using a PactFlow Broker
 
 In step 11 we've been publishing our pacts from the consumer and provider projects to our locally hosted open source Pact broker.
 
@@ -1554,7 +1430,6 @@ Create a new [PactFlow](https://pactflow.io/pricing) account and signup to the f
 
 Grab your [API Token](https://docs.pactflow.io/#configuring-your-api-token)(Click on settings -> API Tokens -> Read/write token -> COPY ENV VARS) and set the environment variables in your terminal as follows:
 
-
 ```sh
 export PACT_BROKER_BASE_URL=https://<your_broker_name>.pactflow.io
 export PACT_BROKER_TOKEN=exampleToken
@@ -1567,39 +1442,41 @@ First, in the consumer project we need to tell Pact about our broker.
 In `consumer/publish.pact.js`:
 
 ```javascript
-const pact = require('@pact-foundation/pact-node');
+const pact = require("@pact-foundation/pact-node");
 
 if (!process.env.CI && !process.env.PUBLISH_PACT) {
-    console.log("skipping Pact publish...");
-    process.exit(0)
+  console.log("skipping Pact publish...");
+  process.exit(0);
 }
 
-const pactBrokerUrl = process.env.PACT_BROKER_BASE_URL || 'https://<your_broker_name>.pactflow.io';
-const pactBrokerToken = process.env.PACT_BROKER_TOKEN || 'pact_workshop';
+const pactBrokerUrl =
+  process.env.PACT_BROKER_BASE_URL || "https://<your_broker_name>.pactflow.io";
+const pactBrokerToken = process.env.PACT_BROKER_TOKEN || "pact_workshop";
 
-const gitHash = require('child_process')
-    .execSync('git rev-parse --short HEAD')
-    .toString().trim();
+const gitHash = require("child_process")
+  .execSync("git rev-parse --short HEAD")
+  .toString()
+  .trim();
 
 const opts = {
-    pactFilesOrDirs: ['./pacts/'],
-    pactBroker: pactBrokerUrl,
-    pactBrokerToken: pactBrokerToken,
-    tags: ['prod', 'test'],
-    consumerVersion: gitHash
+  pactFilesOrDirs: ["./pacts/"],
+  pactBroker: pactBrokerUrl,
+  pactBrokerToken: pactBrokerToken,
+  tags: ["prod", "test"],
+  consumerVersion: gitHash,
 };
 
 pact
-    .publishPacts(opts)
-    .then(() => {
-        console.log('Pact contract publishing complete!');
-        console.log('');
-        console.log(`Head over to ${pactBrokerUrl}`);
-        console.log('to see your published contracts.')
-    })
-    .catch(e => {
-        console.log('Pact contract publishing failed: ', e)
-    });
+  .publishPacts(opts)
+  .then(() => {
+    console.log("Pact contract publishing complete!");
+    console.log("");
+    console.log(`Head over to ${pactBrokerUrl}`);
+    console.log("to see your published contracts.");
+  })
+  .catch((e) => {
+    console.log("Pact contract publishing failed: ", e);
+  });
 ```
 
 Now run
@@ -1655,7 +1532,6 @@ pactBrokerPassword: process.env.PACT_BROKER_PASSWORD || "pact_workshop",
 pactBrokerUrl :process.env.PACT_BROKER_BASE_URL || 'https://<your_broker_name>.pactflow.io',
 pactBrokerToken: process.env.PACT_BROKER_TOKEN || 'pact_workshop',
 ```
-
 
 Let's run the provider verification one last time after this change:
 
