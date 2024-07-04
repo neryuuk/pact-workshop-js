@@ -8,11 +8,7 @@ const authMiddleware = require('../middleware/auth.middleware');
 app.use(authMiddleware);
 app.use(require('./product.routes'));
 const server = app.listen(process.env.PORT);
-console.log(
-  process.env.PACT_BROKER_BASE_URL,
-  process.env.PACT_BROKER_USERNAME,
-  process.env.PACT_BROKER_PASSWORD,
-)
+
 describe("Pact Verification", () => {
   it("validates the expectations of ProductService", () => {
     const opts = {
@@ -21,13 +17,7 @@ describe("Pact Verification", () => {
       provider: "ProductService",
       providerVersion: "1.0.0",
       providerVersionBranch: "test",
-      consumerVersionSelectors: [{
-        latest: true
-      }],
-      pactBrokerUrl: process.env.PACT_BROKER_BASE_URL,
-      // pactBrokerToken: process.env.PACT_BROKER_TOKEN,
-      pactBrokerUsername: process.env.PACT_BROKER_USERNAME,
-      pactBrokerPassword: process.env.PACT_BROKER_PASSWORD,
+      consumerVersionSelectors: [{ latest: true }],
       stateHandlers: {
         "product with ID 10 exists": () => {
           controller.repository.products = new Map([
@@ -47,12 +37,11 @@ describe("Pact Verification", () => {
           controller.repository.products = new Map();
         },
       },
-      requestFilter: (req, res, next) => {
-        if (!req.headers["authorization"]) {
-          next();
-          return;
+      requestFilter: (req, _, next) => {
+        if (req.headers["authorization"]) {
+          req.headers["authorization"] = `Bearer ${new Date().toISOString()}`;
         }
-        req.headers["authorization"] = `Bearer ${new Date().toISOString()}`;
+
         next();
       },
     };
